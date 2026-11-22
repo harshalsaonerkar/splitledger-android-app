@@ -30,8 +30,13 @@ fun HomeScreen(
     val uiState by viewModel.uiState.collectAsState()
     val userEmail by tokenManager.userEmail.collectAsState(initial = "")
 
-    LaunchedEffect(Unit) {
-        viewModel.loadGroups()
+    val lifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current
+    val lifecycleState by lifecycleOwner.lifecycle.currentStateFlow.collectAsState()
+
+    LaunchedEffect(lifecycleState) {
+        if (lifecycleState == androidx.lifecycle.Lifecycle.State.RESUMED) {
+            viewModel.loadGroups()
+        }
     }
 
     Scaffold(

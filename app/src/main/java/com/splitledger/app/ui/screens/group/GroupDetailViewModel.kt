@@ -67,10 +67,15 @@ class GroupDetailViewModel(private val tokenManager: TokenManager) : ViewModel()
                 if (response.isSuccessful) {
                     _uiState.value = _uiState.value.copy(
                         group = response.body())
+                    // reload to get fresh member list
+                    loadGroup(groupId)
+                } else {
+                    _uiState.value = _uiState.value.copy(
+                        errorMessage = "Failed to add member — check if email is registered")
                 }
             } catch (e: Exception) {
                 _uiState.value = _uiState.value.copy(
-                    errorMessage = "Failed to add member")
+                    errorMessage = "Cannot connect to server")
             }
         }
     }

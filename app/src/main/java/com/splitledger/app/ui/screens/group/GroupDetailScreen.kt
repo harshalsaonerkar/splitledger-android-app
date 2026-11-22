@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.Lifecycle
 import com.splitledger.app.ui.theme.*
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -29,9 +30,14 @@ fun GroupDetailScreen(
     var showAddMember by remember { mutableStateOf(false) }
     var memberEmail by remember { mutableStateOf("") }
 
-    LaunchedEffect(groupId) {
-        viewModel.loadGroup(groupId)
-        viewModel.loadExpenses(groupId)
+    val lifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current
+    val lifecycleState by lifecycleOwner.lifecycle.currentStateFlow.collectAsState()
+
+    LaunchedEffect(lifecycleState) {
+        if (lifecycleState == Lifecycle.State.RESUMED) {
+            viewModel.loadGroup(groupId)
+            viewModel.loadExpenses(groupId)
+        }
     }
 
     Scaffold(
